@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Generate Implant</title>
+
+</head>
+<body>
+    <h1>Implant Generation</h1>
+    <hr style="width:50%;text-align:left;margin-left:0">
+
+    <h3>Assembly Code Implant Generation</h3>
+    <form action="{{ url_for('assembly_gen') }}" method="post">
+        <p>TeamServer IP <label>
+        <input type = "text" name = "TeamServerIP" />
+        </label></p>
+        <p>Listener Port <label>
+        <input type = "text" name = "ListenerPort" />
+        </label></p>
+        <p><input type = "submit" value = "Submit" /></p>
+    </form>
+
+    <hr style="width:50%;text-align:left;margin-left:0">
+
+    <h3>Windows x64 Implant Generation</h3>
+    <form action="{{ url_for('windows_gen') }}" method="post">
+        <p>TeamServer IP <label>
+        <input type = "text" name = "TeamServerIP" />
+        </label></p>
+        <p>Listener Port <label>
+        <input type = "text" name = "ListenerPort" />
+        </label></p>
+        <p><input type = "submit" value = "Submit" /></p>
+    </form>
+
+<p><a href="{{ url_for('index') }}">Index</a></p>
+<p><a href="{{ url_for('listener_page') }}">Listener</a></p>
+</body>
+</html>
