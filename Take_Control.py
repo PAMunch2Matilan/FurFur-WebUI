@@ -13,6 +13,7 @@ import Internals.Upload_Download
 import Utilities.constant as const
 from Services.Auto_Complete import MyCompleter
 # import Internals.GoogleAPI.API
+from Utilities import constant as const
 
 Completer_take_control = MyCompleter(
     ["ls", "cd", "mkdir", "rmdir", "rmf", "ps", "whoami", "pwd", "rev2self",
@@ -36,6 +37,8 @@ def take_control_menu(implant_id,selection):
         # List Directory
         elif command == "ls":
             try:
+                print(const.TEAMSERVER_PORT)
+                print(const.TEAMSERVER_IP)
                 task_id  = Internals.Http_Post.send_cmd_args_task_to_implant(command, split_selection[1], implant_id)
 
             # Because "ls" can take also no args
