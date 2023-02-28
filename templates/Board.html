@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Board</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style2.css') }}">
+    <script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+	<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script>
+		$(document).ready(function(){
+			$(".hamburger").click(function(){
+			   $(".wrapper").toggleClass("collapse");
+			});
+		});
+	</script>
+    <link rel="script" href="{{ url_for('static', filename='Board_Request.js') }}">
+</head>
+<body>
+    <div class="wrapper">
+      <div class="top_navbar">
+        <div class="hamburger">
+           <li><a href="#" class="logo">
+                    <img src="{{url_for('static', filename='loutre.jpg')}}"/>
+            </a></li>
+        </div>
+        <div class="top_menu">
+          <div class="logo">FURFUR ERRNO</div>
+        </div>
+      </div>
+
+        <div class="sidebar">
+            <ul>
+                <BR>
+                <li><a href="{{ url_for('index') }}">
+                        <span class="icon"><i class="fas fa-home"></i></span>
+                        <span class="title">Home</span></a></li>
+                </a></li>
+                <li><a href="{{ url_for('listener_page') }}">
+                        <span class="icon"><i class="fas fa-assistive-listening-systems"></i></span>
+                        <span class="title">Listener</span>
+                </a></li>
+                <li><a href="{{ url_for('generate_page') }}">
+                    <span class="icon"><i class="fa fa-balance-scale"></i></span>
+                    <span class="title">Generate Implant</span>
+                </a></li>
+                <li><a href="{{ url_for('board_page') }}">
+                    <span class="icon"><i class="fas fa-chart-bar"></i></span>
+                    <span class="title">Board</span>
+                </a></li>
+            </ul>
+        </div>
+        <div class="main_container">
+            <h2>Board</h2>
+            <BR><BR>
+            <div class="block">
+                <h3>Tableau des listeners</h3>
+                <div id="table1-container"></div>
+                <script>
+                    let encodedString = "{{ doc }}";
+                    let decodedString = decodeURIComponent(encodedString.replace(/&#(\d+);/g, function(match, dec) {
+                        return String.fromCharCode(dec);
+                    }));
+                    const json = JSON.stringify(decodedString);
+                    const encoded = encodeURIComponent(json);
+
+                    const dencoded = decodeURIComponent(encoded);
+                    let dict = JSON.parse(dencoded);
+
+                    const stringData = dict;
+                    // Step 1: Convert string to JavaScript object
+                    const jsonData = JSON.parse(stringData.replace(/'/g, "\""));
+
+                    // Step 2: Convert object to array of arrays
+                    const data = Object.entries(jsonData);
+
+                    // Get a reference to the HTML element where you want to add the table
+                      const table1div = document.getElementById('table1-container');
+
+                      // Create a new table element
+                      const table = document.createElement('table');
+
+                    // Step 4: Add rows and cells to table
+                    for (let i = 0; i < data.length; i++) {
+                      const row = table.insertRow();
+                      const keyCell = row.insertCell();
+                      const valueCell = row.insertCell();
+                      keyCell.textContent = data[i][0];
+                      valueCell.textContent = data[i][1];
+                    }
+                    var row = table.insertRow(0);
+                    var cell1 = row.insertCell(0);
+                    var cell2 = row.insertCell(1);
+                    cell1.innerHTML = "<strong>Name</strong>";
+                    cell2.innerHTML = "<strong>Bind Port</strong>";
+
+                    // Append table to document
+                    table1div.appendChild(table);
+                </script>
+                <BR><BR>
+                <h3>Tableau des Implants</h3>
+                {#<div id="table2-container"></div>
+                <script>
+                  // Define the input dictionary
+                  const inputDict = {{docImplant|tojson}};
+
+                  // Get a reference to the HTML element where you want to add the table
+                  const table2div = document.getElementById('table2-container');
+
+                  // Create a new table element
+                  const table2 = document.createElement('table');
+
+                  // Create the table header row
+                  const headerRow = document.createElement('tr');
+                  const headerKeys = Object.keys(inputDict);
+                  headerKeys.forEach(key => {
+                    const headerCell = document.createElement('th');
+                    headerCell.textContent = key;
+                    headerRow.appendChild(headerCell);
+                  });
+                  table2.appendChild(headerRow);
+
+                  // Create a table row for each value in the input dictionary
+                  const valueRows = [];
+                  const values = Object.values(inputDict);
+                  const numRows = values[0].length;
+                  for (let i = 0; i < numRows; i++) {
+                    const valueRow = document.createElement('tr');
+                    valueRows.push(valueRow);
+                    values.forEach(value => {
+                      const valueCell = document.createElement('td');
+                      valueCell.textContent = value[i];
+                      valueRow.appendChild(valueCell);
+                    });
+                    table2.appendChild(valueRow);
+                  }
+                  table2.deleteRow(0);
+                  // Insert a new first column in the table
+                for(var i=0; i<table2.rows.length; i++) {
+                  var cell = table2.rows[i].insertCell(0);
+
+                  // Add content to the new cell based on row index
+                  switch(i) {
+                    case 0:
+                      cell.innerHTML = "<b>Hostname</b>";
+                      break;
+                    case 1:
+                      cell.innerHTML = "<b>Username</b>";
+                      break;
+                    case 2:
+                      cell.innerHTML = "<b>ID</b>";
+                      break;
+                    case 3:
+                      cell.innerHTML = "<b>ProcessName</b>";
+                      break;
+                    case 4:
+                      cell.innerHTML = "<b>Integrity</b>";
+                      break;
+                    case 5:
+                      cell.innerHTML = "<b>IP</b>";
+                      break;
+                    case 6:
+                      cell.innerHTML = "<b>lastSeen</b>";
+                      break;
+                    case 7:
+                      cell.innerHTML = "<b>Status</b>";
+                      break;}}
+                  // Append table to document
+                  table2div.appendChild(table2);
+                </script>#}
+                <div id="table2-container"></div>
+                <script>
+                  // Define the input dictionary
+                  const inputDict = {{docImplant|tojson}};
+
+                  // Get a reference to the HTML element where you want to add the table
+                  const table2div = document.getElementById('table2-container');
+
+                  // Create a new table element
+                  const table2 = document.createElement('table');
+
+                  // Create an array of header keys
+                  const headerKeys = Object.keys(inputDict);
+
+                  // Create a table row for each header key
+                  headerKeys.forEach((headerKey, rowIndex) => {
+                    // Create a new row element for the current header key
+                    const row = document.createElement('tr');
+
+                    // Create the first cell in the current row for the current header key
+                    const headerCell = document.createElement('th');
+                    headerCell.textContent = headerKey;
+                    row.appendChild(headerCell);
+
+                    // Create a table cell for each value in the current header key's array
+                    const values = inputDict[headerKey];
+                    values.forEach((value, colIndex) => {
+                      const valueCell = document.createElement('td');
+                      valueCell.textContent = value;
+                      // Add the value cell to the current row
+                      row.appendChild(valueCell);
+                    });
+
+                    // Add the current row to the table
+                    table2.appendChild(row);
+                  });
+                  const rows2 = table2.rows;
+                  for (let i = 0; i < rows2.length; i++) {
+                    rows2[i].deleteCell(0); // delete the second cell in each row
+                  }
+                    var row = table2.insertRow(0);
+                    var cell1 = row.insertCell(0);
+                    var cell2 = row.insertCell(1);
+                    var cell3 = row.insertCell(2);
+                    var cell4 = row.insertCell(3);
+                    var cell5 = row.insertCell(4);
+                    var cell6 = row.insertCell(5);
+                    var cell7 = row.insertCell(6);
+                    var cell8 = row.insertCell(7);
+
+                    cell1.innerHTML = "<strong>Hostname</strong>";
+                    cell2.innerHTML = "<strong>Username</strong>";
+                    cell3.innerHTML = "<strong>ID</strong>";
+                    cell4.innerHTML = "<strong>ProcessName</strong>";
+                    cell5.innerHTML = "<strong>Integrity</strong>";
+                    cell6.innerHTML = "<strong>IP</strong>";
+                    cell7.innerHTML = "<strong>lastSeen</strong>";
+                    cell8.innerHTML = "<strong>Status</strong>";
+
+                 {# // Insert a new row at the end of the table
+                  var row = table2.insertRow(0);
+                    // Insert cells into the new row
+                    const cell1 = newRow.insertCell(0);
+                    const cell2 = newRow.insertCell(1);
+                    const cell3 = newRow.insertCell(2);
+                    const cell4 = newRow.insertCell(3);
+                    const cell5 = newRow.insertCell(4);
+                    const cell6 = newRow.insertCell(5);
+                    const cell7 = newRow.insertCell(6);
+                    const cell8 = newRow.insertCell(7);
+
+
+                    // Set the cell values
+                    cell1.textContent = "Value 1";
+                    cell2.textContent = "Value 2";
+                    cell3.textContent = "Value 3";
+                    cell4.textContent = "Value 1";
+                    cell5.textContent = "Value 2";
+                    cell6.textContent = "Value 3";
+                    cell7.textContent = "Value 1";
+                    cell8.textContent = "Value 2";#}
+
+                    // Append table to document
+                  table2div.appendChild(table2);
+                </script>
+
+            </div>
+        </div>
+    </div>
+</body>
+</html>
