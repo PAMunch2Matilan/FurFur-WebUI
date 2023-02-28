@@ -3,50 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <title>Listener</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style2.css') }}">
+    <script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+	<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script>
+		$(document).ready(function(){
+			$(".hamburger").click(function(){
+			   $(".wrapper").toggleClass("collapse");
+			});
+		});
+	</script>
 </head>
 
 <body>
-    <h1>Listener</h1>
-    <hr style="width:50%;text-align:left;margin-left:0">
+    <div class="wrapper">
+      <div class="top_navbar">
+        <div class="hamburger">
+           <li><a href="#" class="logo">
+                    <img src="{{url_for('static', filename='loutre.jpg')}}"/>
+            </a></li>
+        </div>
+        <div class="top_menu">
+          <div class="logo">FURFUR ERRNO</div>
+        </div>
+      </div>
 
-    <h3>Show Listener</h3>
-    <form action="{{ url_for('show_listener') }}" method="post">
-        <p>Name <label>
-        <input type = "text" name = "Name" />
-        </label></p>
-        <p><input type = "submit" value = "Submit" /></p>
-    </form>
-
-    <hr style="width:50%;text-align:left;margin-left:0">
-    <h3>Show All Listeners</h3>
-
-    <form action="{{ url_for('show_listeners') }}" method="post">
-        <button name="ShowListeners" type="submit">ShowListeners</button>
-    </form>
-
-    <hr style="width:50%;text-align:left;margin-left:0">
-    <h3>Create Listener</h3>
-
-    <form action="{{ url_for('create_listener') }}" method="post">
-        <p>Name <label>
-        <input type = "text" name = "Name" />
-        </label></p>
-        <p>Port <label>
-        <input type = "text" name = "Port" />
-        </label></p>
-        <p><input type = "submit" value = "Submit" /></p>
-    </form>
-
-    <hr style="width:50%;text-align:left;margin-left:0">
-    <h3>Delete Listener</h3>
-    <form action="{{ url_for('delete_listener') }}" method="post">
-        <p>Name <label>
-        <input type = "text" name = "Name" />
-        </label></p>
-        <p><input type = "submit" value = "Submit" /></p>
-    </form>
-
-<p><a href="{{ url_for('index') }}">Index</a></p>
-<p><a href="{{ url_for('generate_page') }}">Implant Generation</a></p>
+    <div class="sidebar">
+        <ul>
+            <BR>
+            <li><a href="{{ url_for('index') }}">
+                    <span class="icon"><i class="fas fa-home"></i></span>
+                    <span class="title">Home</span></a></li>
+            </a></li>
+            <li><a href="{{ url_for('listener_page') }}">
+                    <span class="icon"><i class="fas fa-assistive-listening-systems"></i></span>
+                    <span class="title">Listener</span>
+            </a></li>
+            <li><a href="{{ url_for('implant_page') }}">
+                        <span class="icon"><i class="fas fa-bolt"></i></span>
+                        <span class="title">Implant</span>
+                </a></li>
+            <li><a href="{{ url_for('generate_page') }}">
+                <span class="icon"><i class="fa fa-balance-scale"></i></span>
+                <span class="title">Generate Implant</span>
+            </a></li>
+            <li><a href="{{ url_for('board_page') }}">
+                <span class="icon"><i class="fas fa-chart-bar"></i></span>
+                <span class="title">Board</span>
+            </a></li>
+        </ul>
+    </div>
+    <div class="main_container">
+        <h2>Listener</h2>
+        <BR><BR>
+        <hr style="width:50%;text-align:left;margin-left:0">
+        <BR><BR>
+        <div class="block">
+            <h3>Show Listener</h3>
+            <BR>
+            <form action="{{ url_for('show_listener') }}" method="post">
+                <p>Name <label>
+                <input type = "text" name = "Name" />
+                </label></p>
+                <BR>
+                <p><input type = "submit" value = "Submit" class="submit_button"/></p>
+            </form>
+            <BR>
+        </div>
+        <BR><BR>
+        <hr style="width:50%;text-align:left;margin-left:0">
+        <BR><BR>
+        <div class="block">
+            <h3>Show All Listeners</h3>
+            <form action="{{ url_for('show_listeners') }}" method="post">
+                <button name="ShowListeners" type="submit">ShowListeners</button>
+            </form>
+        </div>
+        <BR><BR>
+        <hr style="width:50%;text-align:left;margin-left:0">
+        <BR><BR>
+        <div class="block">
+            <h3>Create Listener</h3>
+            <form action="{{ url_for('create_listener') }}" method="post">
+                <p>Name <label>
+                <input type = "text" name = "Name" />
+                </label></p>
+                <p>Port <label>
+                <input type = "text" name = "Port" />
+                </label></p>
+                <p><input type = "submit" value = "Submit" /></p>
+            </form>
+        </div>
+        <BR><BR>
+        <hr style="width:50%;text-align:left;margin-left:0">
+        <BR><BR>
+        <div class="block">
+            <h3>Delete Listener</h3>
+            <form action="{{ url_for('delete_listener') }}" method="post">
+                <p>Name <label>
+                <input type = "text" name = "Name" />
+                </label></p>
+                <p><input type = "submit" value = "Submit" /></p>
+            </form>
+        </div>
+    </div>
+</div>
 </body>
 </html>

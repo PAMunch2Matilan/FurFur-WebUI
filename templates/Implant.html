@@ -1,35 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta name="viewport" content="initial-scale=1.0">
     <meta charset="UTF-8">
     <title>Implant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style2.css') }}">
+    <script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+	<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script>
+		$(document).ready(function(){
+			$(".hamburger").click(function(){
+			   $(".wrapper").toggleClass("collapse");
+			});
+		});
+	</script>
 </head>
 <body>
-    <h1>Implants</h1>
-    <hr style="width:50%;text-align:left;margin-left:0">
-
-    <h3>Show All Implants</h3>
-    <form action="{{ url_for('show_implant') }}" method="POST">
-        <button name="ShowImplant" type="submit">ShowImplants</button>
-        <p>{{resultat}}</p>
-    </form>
-
-    <hr style="width:50%;text-align:left;margin-left:0">
-    <h3>Show Implant by ID</h3>
-    <form action="{{ url_for('show_implant_by_id') }}" method="POST">
-        <p>Name <label>
-        <input type = "text" name = "Name" />
-        </label></p>
-        <p><input type = "submit" value = "Submit" /></p>
-    </form>
-
-    <hr style="width:50%;text-align:left;margin-left:0">
-    <h3>Take Control</h3>
-        <form action="{{ url_for('take_control') }}" method="post" target="_blank">
-      <label for="param_input">Entrez l'id de l'implant' :</label>
-      <input type="text" name="id_implant" id="id_implant">
-      <button type="submit">Take Control</button>
-    </form>
+    <div class="wrapper">
+      <div class="top_navbar">
+        <div class="hamburger">
+           <li><a href="#" class="logo">
+                    <img src="{{url_for('static', filename='loutre.jpg')}}"/>
+            </a></li>
+        </div>
+        <div class="top_menu">
+          <div class="logo">FURFUR ERRNO</div>
+        </div>
+      </div>
+        <div class="sidebar">
+            <ul>
+                <BR>
+                <li><a href="{{ url_for('index') }}">
+                        <span class="icon"><i class="fas fa-home"></i></span>
+                        <span class="title">Home</span></a></li>
+                <li><a href="{{ url_for('listener_page') }}">
+                        <span class="icon"><i class="fas fa-assistive-listening-systems"></i></span>
+                        <span class="title">Listener</span>
+                </a></li>
+                <li><a href="{{ url_for('implant_page') }}">
+                        <span class="icon"><i class="fas fa-bolt"></i></span>
+                        <span class="title">Implant</span>
+                </a></li>
+                <li><a href="{{ url_for('generate_page') }}">
+                    <span class="icon"><i class="fa fa-balance-scale"></i></span>
+                    <span class="title">Generate Implant</span>
+                </a></li>
+                <li><a href="{{ url_for('board_page') }}">
+                    <span class="icon"><i class="fas fa-chart-bar"></i></span>
+                    <span class="title">Board</span>
+                </a></li>
+            </ul>
+        </div>
+        <div class="main_container">
+        <h2>Implants</h2>
+            <BR><BR>
+        <hr style="width:50%;text-align:left;margin-left:0">
+            <BR><BR>
+        <div class="block">
+            <h3>Show All Implants</h3>
+            <form action="{{ url_for('show_implant') }}" method="POST">
+                <button name="ShowImplant" type="submit">ShowImplants</button>
+                <p>{{resultat}}</p>
+            </form>
+        </div>
+            <BR><BR>
+        <hr style="width:50%;text-align:left;margin-left:0">
+            <BR><BR>
+        <div class="block">
+            <h3>Show Implant by ID</h3>
+            <form action="{{ url_for('show_implant_by_id') }}" method="POST">
+                <p>Name <label><input type = "text" name = "Name" /></label></p>
+                <p><input type = "submit" value = "Submit" /></p>
+            </form>
+        </div>
+            <BR><BR>
+        <hr style="width:50%;text-align:left;margin-left:0">
+            <BR><BR>
+        <div class="block">
+            <h3>Take Control</h3>
+            <form action="{{ url_for('take_control') }}" method="post" target="_blank">
+              <label for="param_input">Entrez l'id de l'implant' :</label>
+              <input type="text" name="id_implant" id="id_implant">
+              <button type="submit">Take Control</button>
+            </form>
+        </div>
 
 
 <!--    <hr style="width:50%;text-align:left;margin-left:0">-->
@@ -53,8 +107,7 @@
 <!--        </label></p>-->
 <!--        <p><input type = "submit" value = "Submit" /></p>-->
 <!--    </form>-->
-
-<p><a href="{{ url_for('index') }}">Index</a></p>
-<p><a href="{{ url_for('implant_page') }}">Implant </a></p>
+        </div>
+    </div>
 </body>
 </html>

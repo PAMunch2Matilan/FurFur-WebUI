@@ -21,7 +21,7 @@ def warning_message(message):
     print("<p>[/!\\] " + str(message) + "</p>")
 
 
-TEAMSERVER_IP = "172.24.192.148"
+TEAMSERVER_IP = "localhost"
 TEAMSERVER_PORT = "8000"
 
 DOWNLOAD_FOLDER = "Downloads\\"

