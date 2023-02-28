@@ -1,9 +1,115 @@
 hr {
   display: block;
-  margin-top: 0.5em;
-  margin-bottom: 0.5em;
-  margin-left: auto;
+  margin-top: 2em;
+  margin-bottom: 2em;
+  margin-left: 2em;
   margin-right: auto;
   border-style: inset;
   border-width: 1px;
+  background: darkslategrey;
 }
+
+*{
+  margin: 0;
+  padding: 0;
+  outline: none;
+  border: none;
+  text-decoration: none;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body{
+  background: darkred;
+}
+.wrapper{
+  margin: 10px;
+}
+
+.wrapper .top_navbar{
+  width: calc(100% - 20px);
+  height: 60px;
+  display: flex;
+  position: fixed;
+  top: 10px;
+}
+
+nav{
+  position: absolute;
+  top: 50px;
+  bottom: 0;
+  height: 400px;
+  left: 0;
+  background: grey;
+  width: 90px;
+  overflow: hidden;
+  transition: width 0.2s linear;
+  box-shadow: 0 20px 35px rgba(0,0,0,0.1);
+  border-radius: 5px;
+  font-family: "DejaVu Serif";
+}
+.corp{
+  margin-left: 150px;
+  margin-top: 50px;
+  background: slategrey;
+  border-radius: 5px;
+}
+
+h1{
+  margin-left: 50px;
+
+}
+
+.logo{
+  text-align: center;
+  display: flex;
+  transition: all 0.5s ease;
+  margin: 10px 0 0 10px;
+}
+
+.logo img{
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+}
+
+.logo span{
+  font-weight: bold;
+  padding-left: 15px;
+  font-size: 18px;
+  text-transform: uppercase;
+}
+
+a{
+  position: relative;
+  color: rgb(85,83,83);
+  font-size: 14px;
+  display: table;
+  width: 300px;
+  padding: 10px;
+}
+
+.fas{
+  position: relative;
+  width: 70px;
+  height: 40px;
+  top: 14px;
+  font-size: 20px;
+  text-align: center;
+}
+
+.nav-item{
+  position: relative;
+  top: 12px;
+  margin-left: 10px;
+}
+
+a:hover{
+  background: #eee;
+}
+
+nav:hover{
+  width: 280px;
+  transition: all 0.5s ease;
+}
+
