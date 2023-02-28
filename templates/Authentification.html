@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Authentification</title>
+</head>
+<body>
+    <h1>Authentification</h1>
+    <hr style="width:50%;text-align:left;margin-left:0">
+
+    <h3>Show All Implants</h3>
+    <form action="{{ url_for('authentification') }}" method="POST">
+        <p>Ip TeamServer <label>
+        <input type = "text" name = "ip" />
+        </label></p>
+        <p>Port Teamserver <label>
+        <input type = "text" name = "port" />
+        </label></p>
+        <p><input type = "submit" value = "Submit" /></p>
+    </form>
+
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Implant</title>
+</head>
+<body>
+    <h1>Implants</h1>
+    <hr style="width:50%;text-align:left;margin-left:0">
+
+    <h3>Show All Implants</h3>
+    <form action="{{ url_for('show_implant') }}" method="POST">
+        <button name="ShowImplant" type="submit">ShowImplants</button>
+        <p>{{resultat}}</p>
+    </form>
+
+    <hr style="width:50%;text-align:left;margin-left:0">
+    <h3>Show Implant by ID</h3>
+    <form action="{{ url_for('show_implant_by_id') }}" method="POST">
+        <p>Name <label>
+        <input type = "text" name = "Name" />
+        </label></p>
+        <p><input type = "submit" value = "Submit" /></p>
+    </form>
+
+    <hr style="width:50%;text-align:left;margin-left:0">
+    <h3>Take Control</h3>
+        <form action="{{ url_for('take_control') }}" method="post" target="_blank">
+      <label for="param_input">Entrez l'id de l'implant' :</label>
+      <input type="text" name="id_implant" id="id_implant">
+      <button type="submit">Take Control</button>
+    </form>
+
+
+<!--    <hr style="width:50%;text-align:left;margin-left:0">-->
+<!--    <h3>Create Listener</h3>-->
+
+<!--    <form action="{{ url_for('create_listener') }}" method="post">-->
+<!--        <p>Name <label>-->
+<!--        <input type = "text" name = "Name" />-->
+<!--        </label></p>-->
+<!--        <p>Port <label>-->
+<!--        <input type = "text" name = "Port" />-->
+<!--        </label></p>-->
+<!--        <p><input type = "submit" value = "Submit" /></p>-->
+<!--    </form>-->
+
+<!--    <hr style="width:50%;text-align:left;margin-left:0">-->
+<!--    <h3>Delete Listener</h3>-->
+<!--    <form action="{{ url_for('delete_listener') }}" method="post">-->
+<!--        <p>Name <label>-->
+<!--        <input type = "text" name = "Name" />-->
+<!--        </label></p>-->
+<!--        <p><input type = "submit" value = "Submit" /></p>-->
+<!--    </form>-->
+
+<p><a href="{{ url_for('index') }}">Index</a></p>
+<p><a href="{{ url_for('implant_page') }}">Implant </a></p>
+</body>
+</html>
