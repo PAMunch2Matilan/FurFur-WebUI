@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
 import requests
 import Services
-
+from Utilities import constant as const
 from Services.Implant_Generation import Assembly_Gen
 from Services.Implant_Generation import Basic_Gen
 from Services.Convert_Time import convert_time
@@ -27,6 +27,8 @@ def authentification():  # put application's code here
     req = requests.get("http://" + ip + ":" + port + "/Listeners")
 
     if req.status_code == 200:
+        const.TEAMSERVER_IP = ip
+        const.TEAMSERVER_PORT = port
         return index()
     else:
         return render_template('Authentification.html')
@@ -47,7 +49,7 @@ def index():  # put application's code here
     doc = {}
     name_list = []
 
-    url = "http://localhost:8000/Listeners"
+    url = "http://" + const.TEAMSERVER_IP + ":" + const.TEAMSERVER_PORT + "/Listeners"
     req = requests.get(url)
     content = req.text
     json_obj = json.loads(content)
@@ -58,7 +60,7 @@ def index():  # put application's code here
         flag = flag + 1
 
     for name in name_list:
-        url = "http://localhost:8000/Listeners/" + name
+        url = "http://" + const.TEAMSERVER_IP + ":" + const.TEAMSERVER_PORT + "/Listeners/" + name
 
         req = requests.get(url)
 
@@ -75,7 +77,7 @@ def index():  # put application's code here
     integrity_list = []
     Coordinate_list = []
 
-    url = "http://localhost:8000/Implants"
+    url = "http://" + const.TEAMSERVER_IP + ":" + const.TEAMSERVER_PORT + "/Implants"
     req = requests.get(url)
     content = req.text
 
@@ -88,7 +90,7 @@ def index():  # put application's code here
         flag = flag + 1
 
     for id in implant_id_list:
-        url = "http://localhost:8000/Implants/" + id
+        url = "http://" + const.TEAMSERVER_IP + ":" + const.TEAMSERVER_PORT + "/Implants/" + id
         req = requests.get(url)
         content = req.text
 
@@ -160,19 +162,19 @@ def show_listener():
     form_data = request.form
     name = form_data.getlist("Name")[0]
 
-    req = requests.request("get", "http://localhost:8000/Listeners/" + name)
+    req = requests.request("get", "http://" + const.TEAMSERVER_IP + ":" + const.TEAMSERVER_PORT + "/Listeners/" + name)
     return req.content
 
 
 @app.route("/Listener/ShowListeners", methods=['POST'])
 def show_listeners():
-    req = requests.request("get", "http://localhost:8000/Listeners")
+    req = requests.request("get", "http://" + const.TEAMSERVER_IP + ":" + const.TEAMSERVER_PORT + "/Listeners")
     return req.content
 
 
 @app.route('/Listener/CreateListener/', methods=['POST'])
 def create_listener():
-    url = "http://localhost:8000/Listeners"
+    url = "http://" + const.TEAMSERVER_IP + ":" + const.TEAMSERVER_PORT + "/Listeners"
 
     if request.method == 'GET':
         return f"The URL /data is accessed directly. Try going to '/form' to submit form"
@@ -196,7 +198,7 @@ def create_listener():
 def delete_listener():
     form_data = request.form
     name = form_data.getlist("Name")[0]
-    url = "http://localhost:8000/Listeners/" + name
+    url = "http://" + const.TEAMSERVER_IP + ":" + const.TEAMSERVER_PORT + "/Listeners/" + name
     req = requests.delete(url)
     if req.status_code == 204:
         return "<p>Listener " + name + " is deleted</p>"
@@ -234,7 +236,7 @@ def board_page():
     doc = {}
     name_list = []
 
-    url = "http://localhost:8000/Listeners"
+    url = "http://" + const.TEAMSERVER_IP + ":" + const.TEAMSERVER_PORT + "/Listeners"
     req = requests.get(url)
     content = req.text
     json_obj = json.loads(content)
@@ -245,7 +247,7 @@ def board_page():
         flag = flag + 1
 
     for name in name_list:
-        url = "http://localhost:8000/Listeners/" + name
+        url = "http://" + const.TEAMSERVER_IP + ":" + const.TEAMSERVER_PORT + "/Listeners/" + name
 
         req = requests.get(url)
 
@@ -258,7 +260,7 @@ def board_page():
     docImplant = {}
     implant_id_list = []
 
-    url = "http://localhost:8000/Implants"
+    url = "http://" + const.TEAMSERVER_IP + ":" + const.TEAMSERVER_PORT + "/Implants"
     req = requests.get(url)
     content = req.text
 
@@ -271,7 +273,7 @@ def board_page():
         flag = flag + 1
 
     for id in implant_id_list:
-        url = "http://localhost:8000/Implants/" + id
+        url = "http://" + const.TEAMSERVER_IP + ":" + const.TEAMSERVER_PORT + "/Implants/" + id
         req = requests.get(url)
         content = req.text
 
@@ -328,7 +330,7 @@ def implant_page(resultat =""):
 
 @app.route("/Implant/ShowImplant", methods=['POST'])
 def show_implant():
-     req = requests.request("get", "http://localhost:8000/Implants")
+     req = requests.request("get", "http://" + const.TEAMSERVER_IP + ":" + const.TEAMSERVER_PORT + "/Implants")
      return render_template('Implant.html',resultat=req.content)
 
 @app.route("/Implant/ShowImplantByID", methods=['POST'])
@@ -337,7 +339,7 @@ def show_implant_by_id():
      form_data = request.form
      name = form_data.getlist("Name")[0]
 
-     req = requests.request("get", "http://localhost:8000/Implants/" + name)
+     req = requests.request("get", "http://" + const.TEAMSERVER_IP + ":" + const.TEAMSERVER_PORT + "/Implants/" + name)
      return req.content
 
 @app.route("/TakeControl/TakeControl", methods=['POST'])
@@ -368,7 +370,7 @@ def send_command():
     hidden_value = request.form['id_implant']
     task = Take_Control.take_control_menu(hidden_value,com)
     print(task)
-    response = requests.get('http://localhost:8000/Implants/' + hidden_value + '/tasks/' + task)
+    response = requests.get('http://" + const.TEAMSERVER_IP + ":" + const.TEAMSERVER_PORT + "/Implants/' + hidden_value + '/tasks/' + task)
     content = response.text
     print("Content : " + content)
     time.sleep(2)
@@ -376,7 +378,7 @@ def send_command():
     # Attendre que la tâche soit terminée et récupérer le résultat
     while response.text == "task not found":
 
-            response = requests.get('http://localhost:8000/Implants/'+hidden_value + '/tasks/'+ task )
+            response = requests.get('http://" + const.TEAMSERVER_IP + ":" + const.TEAMSERVER_PORT + "/Implants/'+hidden_value + '/tasks/'+ task )
             print(response)
             content = response.text
             print(content)
