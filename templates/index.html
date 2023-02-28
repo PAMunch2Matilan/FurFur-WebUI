@@ -61,8 +61,6 @@
                     <canvas id="myChart"></canvas>
                     <script>
                         var ctx = document.getElementById("myChart").getContext("2d");
-                        console.log("{{ count_connected }}")
-                        console.log("{{ count_disconnected }}")
 
                         var myChart = new Chart(ctx, {
                             type: 'pie',
@@ -89,71 +87,77 @@
                     </script>
                     <canvas id="myChart2"></canvas>
                     <script>
-                        let data222 = "{{ integrity_list }}";
+                        console.log("{{ integrity_list }}")
+                        let integrity_list = "{{ integrity_list }}";
+                        if (integrity_list === "[]") {
+                            console.log("Test if")
+                            // Do nothing or display an error message
+                        } else {
+                            console.log("Test else")
+                            let data222 = "{{ integrity_list }}";
 
-                        let data22 = data222.replace(/&#39;/g, '').slice(1, -1).split(',');
-                        let data2 = data22.map((element) => element.trim());
-                        console.log(data2)
-                        const counts2 = {};
-                        data2.forEach(function(x) { counts2[x] = (counts2[x] || 0) + 1; });
-                        const values2 = Object.values(counts2);
+                            let data22 = data222.replace(/&#39;/g, '').slice(1, -1).split(',');
+                            let data2 = data22.map((element) => element.trim());
+                            const counts2 = {};
+                            data2.forEach(function(x) { counts2[x] = (counts2[x] || 0) + 1; });
+                            const values2 = Object.values(counts2);
 
-                        const possibleValues = ["SYSTEM", "High", "Medium"];
-                        const labels = possibleValues.filter(value => data2.includes(value));
-                        const dataCounts = {};
-                        data2.forEach(function(x) { dataCounts[x] = (dataCounts[x] || 0) + 1; });
-                        const values = labels.map(label => dataCounts[label]);
+                            const possibleValues = ["SYSTEM", "High", "Medium"];
+                            const labels = possibleValues.filter(value => data2.includes(value));
+                            const dataCounts = {};
+                            data2.forEach(function(x) { dataCounts[x] = (dataCounts[x] || 0) + 1; });
+                            const values = labels.map(label => dataCounts[label]);
 
-                        const ctx2 = document.getElementById('myChart2').getContext('2d');
-                        const myChart2 = new Chart(ctx2, {
-                            type: 'pie',
-                            data: {
-                                labels: labels,
-                                datasets: [{
-                                    label: 'Implant',
-                                    data: values2,
-                                    backgroundColor: [
-                                        'rgb(255, 0, 0)', // rouge pour "systeme"
-                                        'rgb(255, 165, 0)', // orange pour "high"
-                                        'rgb(255, 255, 0)', // jaune pour "medium"
-                                    ],
-                                    hoverOffset: 2
-                                }]
-                            },
-                            options:{
-                                responsive: false,
-                                maintainAspectRatio: false, // désactiver le ratio d'aspect
-                                maxWidth: 500, // définir une taille maximale en pixels
-                                maxHeight: 500
-                            }
-                        });
+                            const ctx2 = document.getElementById('myChart2').getContext('2d');
+                            const myChart2 = new Chart(ctx2, {
+                                type: 'pie',
+                                data: {
+                                    labels: labels,
+                                    datasets: [{
+                                        label: 'Implant',
+                                        data: values2,
+                                        backgroundColor: [
+                                            'rgb(255, 0, 0)', // rouge pour "systeme"
+                                            'rgb(255, 165, 0)', // orange pour "high"
+                                            'rgb(255, 255, 0)', // jaune pour "medium"
+                                        ],
+                                        hoverOffset: 2
+                                    }]
+                                },
+                                options:{
+                                    responsive: false,
+                                    maintainAspectRatio: false, // désactiver le ratio d'aspect
+                                    maxWidth: 500, // définir une taille maximale en pixels
+                                    maxHeight: 500
+                                }
+                            });}
                     </script>
                 </div>
                 <BR><BR>
                 <div id="map">
-                <script>
-                  const coordinates = {{ Coordinate_list|tojson }};
-                  function initMap() {
-                    // Créer la carte centrée sur les coordonnées souhaitées
-                    const map = new google.maps.Map(document.getElementById("map"), {
-                      center: { lat: 48.8323, lng: 2.4075 },
-                      zoom: 3,
-                    });
-                    // Ajouter un marqueur sur la carte pour chaque coordonnée
-                    for (let i = 0; i < coordinates.length; i++) {
-                      const marker = new google.maps.Marker({
-                        position: { lat: coordinates[i].lat, lng: coordinates[i].lon },
-                        map: map,
-                          title: coordinates[i].hostname + " : " + coordinates[i].IP_Public
-                      });
-                    }
-                  }
-                </script>
-                <script
-                      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBL1wE_ob0lb8U3dpumPMTOzYgRP0E0ebc&callback=initMap"
-                      async defer
-                    ></script>
-                    </div>
+                    <script>
+                      const coordinates = {{ Coordinate_list|tojson }};
+                      function initMap() {
+                        // Créer la carte centrée sur les coordonnées souhaitées
+                        const map = new google.maps.Map(document.getElementById("map"), {
+                          center: { lat: 48.8323, lng: 2.4075 },
+                          zoom: 3,
+                        });
+                        // Ajouter un marqueur sur la carte pour chaque coordonnée
+                        for (let i = 0; i < coordinates.length; i++) {
+                          const marker = new google.maps.Marker({
+                            position: { lat: coordinates[i].lat, lng: coordinates[i].lon },
+                            map: map,
+                              title: coordinates[i].hostname + " : " + coordinates[i].IP_Public
+                          });
+                        }
+                      }
+                    </script>
+                    <script
+                          src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBL1wE_ob0lb8U3dpumPMTOzYgRP0E0ebc&callback=initMap"
+                          async defer
+                        ></script>
+                </div>
                 <BR><BR>
                 <div class = tableau_listeners_implant_container>
                     <h2>Tableaux des listeners/implants</h2>
