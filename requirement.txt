@@ -1,0 +1,7 @@
+pip flask
+pip Flask-Cors
+pip flask-migrate
+pip Flask-SQLAlchemy
+pip Flask-Login
+pip requests
+pip Werkzeug
